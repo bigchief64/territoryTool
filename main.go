@@ -166,12 +166,6 @@ func main() {
 	log.Println("exiting...")
 }
 
-func getData(fileLoc string) string{
-	data := csv.GetData(fileLoc)
-	fmt.Println(data)
-	return ""
-}
-
 func openDialog() string{
 	openDialog, err := cfd.NewOpenFileDialog(cfd.DialogConfig{
 		Title: "Open A File",
