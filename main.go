@@ -43,6 +43,7 @@ func (c *interact) OpenFile() string {
 	f := openDialog()
 	data := csv.GetData(f)
 
+	//loop through each line and clean
 	for k, v := range data {
 		if strings.Contains(v[2], "Ponchatoula") {
 			i := strings.LastIndex(v[2], "Ponchatoula")
@@ -57,11 +58,18 @@ func (c *interact) OpenFile() string {
 			data[k][2] = v[2][:i]
 			data[k] = append(v, "Hammond, LA 70403")
 		}
-
-		data[k] = append(data[k], convertStrHTML(data[k]))
+		tempStr := convertStrHTML(data[k])
+		tempStr = convertToLink(tempStr, data[k][2])
+		data[k] = append(data[k], tempStr)
 	}
 
 	return formatIntoHTML(data)
+}
+
+func convertToLink(str, name string) string{
+	tempStr := "<a href='" + str + "' target='_blank'>" + name + "</a>"
+
+	return tempStr
 }
 
 func convertStrHTML(lines []string) string {
@@ -79,12 +87,14 @@ func convertStrHTML(lines []string) string {
 		str = str + str2 + "_" + str3
 		return str
 	}
+
 	return str2
 }
 
 func formatIntoHTML(data map[string][]string) string {
 	var dataString string
-	dataString = "<table><thead><tr><th>Assigned</th><th>Name</th><th>Sex</th><th>Phone</th><th>Address</th><th>City</th><th>Age</th><th>Link</th></tr></thead>"
+	dataString = "<table><thead><tr><th>Assigned</th><th>Name</th><th>Sex</th>" + 
+		"<th>Phone</th><th>Address</th><th>City</th><th>Age</th><th>Link</th></tr></thead>"
 
 	for k, v := range data {
 		dataString = dataString + "<tr><td></td><td>" + k + "</td>"
@@ -112,7 +122,7 @@ func main() {
 	if runtime.GOOS == "linux" {
 		args = append(args, "--class=Lorca")
 	}
-	ui, err := lorca.New("", "", 800, 600, args...)
+	ui, err := lorca.New("", "", 1024, 768, args...)
 	if err != nil {
 		log.Fatal(err)
 	}
