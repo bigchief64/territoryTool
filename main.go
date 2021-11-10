@@ -36,23 +36,23 @@ func (c *interact) Close() {
 	os.Exit(3)
 }
 
-func (c *interact) OpenFile() string{
+func (c *interact) OpenFile() string {
 	c.Lock()
 	defer c.Unlock()
 
 	f := openDialog()
 	data := csv.GetData(f)
 
-	for k,v := range data {
-		if strings.Contains(v[2], "Ponchatoula"){
+	for k, v := range data {
+		if strings.Contains(v[2], "Ponchatoula") {
 			i := strings.LastIndex(v[2], "Ponchatoula")
 			data[k][2] = v[2][:i]
 			data[k] = append(v, "Ponchatoula, LA 70454")
-		} else if strings.Contains(v[2], "Springfield"){
+		} else if strings.Contains(v[2], "Springfield") {
 			i := strings.LastIndex(v[2], "Springfield")
 			data[k][2] = v[2][:i]
 			data[k] = append(v, "Springfield, LA 70462")
-		} else if strings.Contains(v[2], "Hammond"){
+		} else if strings.Contains(v[2], "Hammond") {
 			i := strings.LastIndex(v[2], "Hammond")
 			data[k][2] = v[2][:i]
 			data[k] = append(v, "Hammond, LA 70403")
@@ -64,7 +64,7 @@ func (c *interact) OpenFile() string{
 	return formatIntoHTML(data)
 }
 
-func convertStrHTML(lines []string)string{
+func convertStrHTML(lines []string) string {
 	str := "https://fastpeoplesearch.com/address/"
 	var str2, str3 string
 
@@ -75,22 +75,22 @@ func convertStrHTML(lines []string)string{
 
 	if len(lines) > 3 {
 		str3 = strings.ReplaceAll(lines[3][:len(lines[3])-6], " ", "-")
-		str3 = strings.Replace(str3, ",","", -1)
+		str3 = strings.Replace(str3, ",", "", -1)
 		str = str + str2 + "_" + str3
 		return str
-	} 
+	}
 	return str2
 }
 
-func formatIntoHTML(data map[string] []string) string {
+func formatIntoHTML(data map[string][]string) string {
 	var dataString string
 	dataString = "<table><thead><tr><th>Assigned</th><th>Name</th><th>Sex</th><th>Phone</th><th>Address</th><th>City</th><th>Age</th><th>Link</th></tr></thead>"
 
-	for k,v := range data {
-		dataString = dataString + "<tr><td></td><td>" + k +"</td>"	
+	for k, v := range data {
+		dataString = dataString + "<tr><td></td><td>" + k + "</td>"
 		for i, r := range v {
-			dataString = dataString + "<td>"+ r +"</td>"
-			if i == 3 {				
+			dataString = dataString + "<td>" + r + "</td>"
+			if i == 3 {
 				dataString = dataString + "<td>     </td>"
 			}
 		}
@@ -101,7 +101,7 @@ func formatIntoHTML(data map[string] []string) string {
 	return dataString
 }
 
-func main() {	
+func main() {
 	args := []string{""}
 	if debug {
 		args = append(args, "debug")
@@ -141,7 +141,7 @@ func main() {
 
 	go http.Serve(ln, http.FileServer(http.FS(fs)))
 	//load starting page
-	if debug{
+	if debug {
 		ui.Load(fmt.Sprintf("http://%s/views/index.html", ln.Addr()))
 	} else {
 		ui.Load(fmt.Sprintf("http://%s/views/index.html", ln.Addr()))
@@ -166,7 +166,7 @@ func main() {
 	log.Println("exiting...")
 }
 
-func openDialog() string{
+func openDialog() string {
 	openDialog, err := cfd.NewOpenFileDialog(cfd.DialogConfig{
 		Title: "Open A File",
 		Role:  "OpenFileExample",
@@ -187,6 +187,7 @@ func openDialog() string{
 	if err != nil {
 		log.Fatal(err)
 	}
+	//this was added as a quick fix to a race condition
 	go func() {
 		time.Sleep(2 * time.Second)
 		if err := openDialog.SetFileName("hello world"); err != nil {
@@ -197,12 +198,10 @@ func openDialog() string{
 		log.Fatal(err)
 	}
 	result, err := openDialog.GetResult()
-	//if err == cfd.ErrorCancelled {
-	//	log.Fatal("Dialog was cancelled by the user.")
-	//} 
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	log.Printf("Chosen file: %s\n", result)
 	return result
 }

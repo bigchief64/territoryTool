@@ -10,11 +10,11 @@ type Setting struct {
 	name, sex, phone, address string
 }
 
-var Settings map[string] []string
+var Settings map[string][]string
 var fileName string
 
-func GetData(filename string)  map[string] []string{
-	Settings = make(map[string] []string)
+func GetData(filename string) map[string][]string {
+	Settings = make(map[string][]string)
 
 	if _, err := os.Stat(filename); err == nil {
 		records, err := readData(filename)
@@ -26,17 +26,17 @@ func GetData(filename string)  map[string] []string{
 		for _, record := range records {
 
 			setting := Setting{
-				name:  record[0],
-				sex: record[1],
-				phone: record[2],
+				name:    record[0],
+				sex:     record[1],
+				phone:   record[2],
 				address: record[3],
 			}
 			//fmt.Printf("%s %s is a %s\n", setting.item, setting.setAs)
 			Settings[setting.name] = []string{setting.sex, setting.phone, setting.address}
 		}
 
-	} else{
-			log.Fatal(err)
+	} else {
+		log.Fatal(err)
 	}
 	return Settings
 }
@@ -65,4 +65,3 @@ func readData(fileName string) ([][]string, error) {
 
 	return records, nil
 }
-

@@ -9,7 +9,3 @@ closeButton.addEventListener('click', async () => {
     dataDiv = document.getElementById('data')
     dataDiv.innerHTML = data
 });
-
-
-
-
